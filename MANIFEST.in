@@ -1,0 +1,6 @@
+graft indico_personal_schedule/client
+graft indico_personal_schedule/static
+graft indico_personal_schedule/templates
+graft indico_personal_schedule/translations
+
+global-exclude *.pyc __pycache__ .keep
