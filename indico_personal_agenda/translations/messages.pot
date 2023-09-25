@@ -1,0 +1,80 @@
+#: indico_personal_agenda/controllers.py:148
+msgid "Settings saved"
+msgstr ""
+
+#: indico_personal_agenda/forms.py:11
+msgid "Speaker Information"
+msgstr ""
+
+#: indico_personal_agenda/forms.py:14
+msgid ""
+"Information shown at the top of the speaker section on the my conference "
+"page"
+msgstr ""
+
+#: indico_personal_agenda/forms.py:19
+msgid "Starred Information"
+msgstr ""
+
+#: indico_personal_agenda/forms.py:22
+msgid ""
+"Information shown at the top of the starred section on the my conference "
+"page"
+msgstr ""
+
+#: indico_personal_agenda/plugin.py:132
+msgid "My Conference"
+msgstr ""
+
+#: indico_personal_agenda/plugin.py:143
+msgid "Personal Agenda"
+msgstr ""
+
+#: indico_personal_agenda/templates/agenda.html:13
+msgid "Speaker and Author Contributions"
+msgstr ""
+
+#: indico_personal_agenda/templates/agenda.html:26
+msgid "Starred Contributions"
+msgstr ""
+
+#: indico_personal_agenda/templates/agenda.html:36
+msgid "You haven't starred any contributions yet. Check out the"
+msgstr ""
+
+#: indico_personal_agenda/templates/agenda.html:36
+msgid "timetable"
+msgstr ""
+
+#: indico_personal_agenda/templates/agenda.html:36
+msgid "to build your agenda."
+msgstr ""
+
+#: indico_personal_agenda/templates/manage.html:10
+msgid "Statistics"
+msgstr ""
+
+#: indico_personal_agenda/templates/manage.html:19
+msgid "ID"
+msgstr ""
+
+#: indico_personal_agenda/templates/manage.html:20
+msgid "Title"
+msgstr ""
+
+#: indico_personal_agenda/templates/manage.html:21
+msgid "Stars"
+msgstr ""
+
+#: indico_personal_agenda/templates/manage.html:54
+msgid "Settings"
+msgstr ""
+
+#: indico_personal_agenda/templates/manage.html:63
+msgid "Save"
+msgstr ""
+
+#: indico_personal_agenda/templates/ngtimetable_menu.html:2
+msgid "Show my agenda"
+msgstr ""
+

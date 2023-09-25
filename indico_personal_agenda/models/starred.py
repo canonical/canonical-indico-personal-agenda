@@ -4,7 +4,7 @@ from indico.util.string import format_repr
 
 class Starred(db.Model):
     __tablename__ = "starred"
-    __table_args__ = {"schema": "plugin_personal_schedule"}
+    __table_args__ = {"schema": "plugin_personal_agenda"}
 
     id = db.Column(db.Integer, primary_key=True)
 

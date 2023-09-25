@@ -8,28 +8,35 @@
 {% endblock %}
 
 {% block content -%}
-    <header>
-        <div class="title">
-            <div class="text">
-                <h2>Your Talks<h2>
-            </div>
-        </div>
-    </header>
-    {% if not published %}
-        {{ render_draft_mode_warning(event) }}
-    {% endif %}
-    <div id="display-contribution-list" class="contribution-list">
-    {% if contributions %}
-        {% for contrib in contributions | selectattr('start_dt_display') | sort(attribute='title') | sort(attribute='start_dt_display') %}
-            {{- _render_contribution_row(timezone, contrib, True) -}}
-        {% endfor %}
-        {% for contrib in contributions | rejectattr('start_dt_display') | sort(attribute='title') %}
-            {{- _render_contribution_row(timezone, contrib, True) -}}
-        {% endfor %}
-    {%- else %}
-        You haven't starred any contributions. Check out the <a href="./timetable/">Timetable</a> right now.
-    {%- endif %}  
+    {% if own_contributions %}
+    <div id="author-contribution-list" class="contribution-list">
+      <h3>{% trans %}Speaker and Author Contributions{% endtrans %}</h3>
+      {% if speaker_intro_message %}
+        {{speaker_intro_message|sanitize_html}}
+      {% endif %}
+      {% for contrib in own_contributions %}
+        {{- _render_contribution_row(timezone, contrib, True) -}}
+      {% endfor %}
     </div>
+    {% endif %}
+
+    {% if published or event.can_manage(session.user) %}
+      <div id="display-contribution-list" class="contribution-list">
+        {% if own_contributions %}
+          <h3>{% trans %}Starred Contributions{% endtrans %}</h3>
+        {% endif %}
+        {% if starred_intro_message %}
+          {{starred_intro_message|sanitize_html}}
+        {% endif %}
+        {% if starred_contributions %}
+            {% for contrib in starred_contributions | selectattr('start_dt_display') | sort(attribute='title') | sort(attribute='start_dt_display') %}
+                {{- _render_contribution_row(timezone, contrib, True) -}}
+            {% endfor %}
+        {%- else %}
+          {% trans %}You haven't starred any contributions yet. Check out the{% endtrans %} <a href="{{timetable_link}}">{% trans %}timetable{% endtrans %}</a> {% trans %} to build your agenda.{% endtrans %}
+        {%- endif %}  
+      </div>
+    {% endif %}
 {%- endblock %}
 
 {% macro _render_contribution_row(timezone, contrib, with_session_info=true) %}

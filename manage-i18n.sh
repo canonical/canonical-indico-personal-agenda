@@ -15,7 +15,7 @@ fi
 
 ACTION="$1"
 LOCALE="$2"
-PLUGINS=personal-schedule
+PLUGINS=personal_agenda
 
 if [[ "$ACTION" == "extract" ]]; then
     PLUGINSINPARAMS=${@:2}

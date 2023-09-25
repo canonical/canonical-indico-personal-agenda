@@ -1,0 +1,46 @@
+.star-button {
+  &.starred {
+    color: #D4AF37 !important;
+  }
+
+  &.speaker {
+    color: #E95420 !important;
+  }
+}
+
+.star-button.timetable-button {
+  transition: color 0.2s ease-out;
+  cursor: pointer;
+  opacity: 0.4;
+  border: 0;
+  background: transparent;
+
+  &.starred, &.speaker {
+    opacity: 1;
+  }
+
+  &:not(.speaker):active {
+    color: #D4AF37 !important;
+    opacity: 0.8 !important;
+  }
+
+  &:not(.starred, .speaker):hover {
+    color: #D4AF37 !important;
+  }
+}
+
+.star-button.i-button + #contribution-calendar-link {
+  margin-left: 0.3rem;
+}
+
+.menu-item.show-personal-agenda.starred::before {
+  color: #D4AF37 !important;
+}
+
+.schedule.show-starred .contribution:not(.starred, .speaker) {
+  display: none !important;
+}
+
+.ngtimetable-unscheduled .star-button, .ngtimetable[data-management] .star-button {
+  display: none;
+}

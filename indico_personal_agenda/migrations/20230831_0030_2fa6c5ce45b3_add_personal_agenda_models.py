@@ -1,4 +1,4 @@
-"""Add personal schedule models
+"""Add personal agenda models
 
 Revision ID: 2fa6c5ce45b3
 Revises:
@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute(CreateSchema("plugin_personal_schedule"))
+    op.execute(CreateSchema("plugin_personal_agenda"))
     op.create_table(
         "starred",
         sa.Column("id", sa.Integer(), nullable=False),
@@ -32,14 +32,14 @@ def upgrade():
             ["user_id"], ["users.users.id"], name=op.f("fk_starred_user_id_users")
         ),
         sa.PrimaryKeyConstraint("id", name=op.f("pk_starred")),
-        schema="plugin_personal_schedule",
+        schema="plugin_personal_agenda",
     )
     op.create_index(
         op.f("ix_starred_contribution_id"),
         "starred",
         ["contribution_id"],
         unique=False,
-        schema="plugin_personal_schedule",
+        schema="plugin_personal_agenda",
     )
 
 
@@ -47,7 +47,7 @@ def downgrade():
     op.drop_index(
         op.f("ix_starred_contribution_id"),
         table_name="starred",
-        schema="plugin_personal_schedule",
+        schema="plugin_personal_agenda",
     )
-    op.drop_table("starred", schema="plugin_personal_schedule")
-    op.execute(DropSchema("plugin_personal_schedule"))
+    op.drop_table("starred", schema="plugin_personal_agenda")
+    op.execute(DropSchema("plugin_personal_agenda"))

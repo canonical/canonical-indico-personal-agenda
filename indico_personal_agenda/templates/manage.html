@@ -1,0 +1,66 @@
+{% extends 'events/management/base.html' %}
+{% from 'forms/_form.html' import form_header, form_rows, form_footer  %}
+
+{%- block content %}
+  {% if contributions %}
+    <header>
+      <div class="title">
+        <div class="text">
+          <div class="title-with-text">
+            <h2>{% trans %}Statistics{% endtrans %}</h2>
+          </div>
+        </div>
+      </div>
+    </header>
+    <section>
+      <table class="i-table tablesorter sortable-list">
+        <thead>
+          <tr class="i-table">
+            <th class="i-table thin-column id-column">{% trans %}ID{% endtrans %}</th>
+            <th class="i-table title-column">{% trans %}Title{% endtrans %}</th>
+            <th align="i-table stars-column">{% trans %}Stars{% endtrans %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for contrib, stars in contributions %}
+            <tr id="contrib-{{contrib.id}}" class="i-table contribution-row"
+                data-friendly-id="{{contrib.friendly_id}}"
+                data-title="{{contrib.title}}">
+              <td class="i-table id-column" data-sorter="false">
+                <span class="vertical-aligner">
+                  {{contrib.friendly_id}}
+                </span>
+              </td>
+              <td class="i-table title-column" data-searchable="{{ contrib.title | lower }}" data-text="{{ contrib.title | lower }}">
+                <span class="vertical-aligner">
+                  <a href="{{url_for('contributions.display_contribution', contrib)}}">{{contrib.title}}</a>
+                </span>
+              </td>
+              <td class="i-table stars-column">
+                <span class="vertical-aligner">
+                  {{stars}}
+                </span>
+              </td>
+            </tr>
+          {% endfor %}
+      </table>
+    </section>
+  {% endif %}
+
+  <header>
+    <div class="title">
+      <div class="text">
+        <div class="title-with-text">
+          <h2>{% trans %}Settings{% endtrans %}</h2>
+        </div>
+      </div>
+    </div>
+  </header>
+  <section>
+    {{ form_header(form, method='post', action=action|default('')) }}
+    {{ form_rows(form) }}
+    {% call form_footer(form) %}
+      <input class="i-button big highlight" type="submit" value="{% trans %}Save{% endtrans %}">
+    {% endcall %}
+  </section>
+{%- endblock %}

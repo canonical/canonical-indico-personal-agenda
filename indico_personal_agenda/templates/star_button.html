@@ -1,0 +1,24 @@
+{% if context == "contribution" %}
+  {% set context = "i-button" %}
+{% elif context == "timetable" %}
+  {% set context = "timetable-button" %}
+{% endif %}
+
+{% set iconclass = "icon-star" %}
+{% if is_speaker %}
+  {% set iconclass = "icon-mic speaker" %}
+{% endif %}
+
+{% set starclass = "" %}
+{% if starred and not is_speaker %}
+  {% set starclass = "starred" %}
+{% endif %}
+
+<button class="star-button {{context}} {{iconclass}} {{starclass}}"
+        {% if is_speaker %}
+        title="{% trans %}You are a speaker{% endtrans %}"
+        {% elif event.can_manage(session.user) %}
+        title="Total Stars: {{total}}"
+        {% endif %}
+        data-event-id="{{event.id}}"
+        data-contrib-id="{{itemId}}"></button>

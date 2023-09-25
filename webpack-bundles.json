@@ -1,6 +1,6 @@
 {
     "entry": {
-	    "contribution_display": "./contribution_display.scss",
-	    "contribution_display_js": "./contribution_display.js"
+	    "starbutton": "./starbutton.scss",
+	    "starbuttonjs": "./starbutton.js"
     }
 }
