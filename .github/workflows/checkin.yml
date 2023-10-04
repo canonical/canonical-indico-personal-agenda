@@ -3,6 +3,9 @@ name: Checkin
 
 on: push
 
+permissions:
+  contents: write
+
 jobs:
   build-indico-plugin:
     runs-on: ubuntu-latest
