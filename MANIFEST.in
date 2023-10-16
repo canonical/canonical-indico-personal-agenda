@@ -1,4 +1,5 @@
 graft indico_personal_agenda/client
+graft indico_personal_agenda/migrations
 graft indico_personal_agenda/static
 graft indico_personal_agenda/templates
 graft indico_personal_agenda/translations
