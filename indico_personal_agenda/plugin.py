@@ -83,7 +83,13 @@ class PersonalAgendaPlugin(IndicoPlugin):
             ).limit(1)
             event = Event.get(patternmatch.group(1))
             item = Contribution.get(patternmatch.group(2))
-            is_speaker = any(link.is_speaker for link in item.person_links)
+
+            is_speaker = any(
+                link.is_speaker
+                and link.person.user
+                and link.person.user == session.user
+                for link in item.person_links
+            )
 
             starred, total = with_total_rows(query, True)
 
@@ -103,7 +109,10 @@ class PersonalAgendaPlugin(IndicoPlugin):
         ).limit(1)
 
         starred, total = with_total_rows(query, True)
-        is_speaker = any(link.is_speaker for link in item.person_links)
+        is_speaker = any(
+            link.is_speaker and link.person.user and link.person.user == session.user
+            for link in item.person_links
+        )
 
         return render_plugin_template(
             "star_button.html",
