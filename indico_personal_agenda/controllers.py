@@ -94,22 +94,19 @@ class RHStarContribution(RHAuthenticatedEventBase):
         self.contrib = Contribution.get_or_404(
             request.view_args["contrib_id"], is_deleted=False
         )
-        self.star = Starred.query.with_parent(self.contrib).first()
+        self.star = Starred.query.filter_by(
+            contribution=self.contrib, user=session.user
+        ).first()
 
     def _process(self):
-        if request.base_url.endswith("/star"):
-            if self.star:
-                raise BadRequest()
-            else:
-                starred = Starred(contribution=self.contrib, user=session.user)
-                db.session.flush()
-                return jsonify_data(flash=False, action="star", id=starred.id)
-        elif request.base_url.endswith("/unstar"):
-            if not self.star:
-                raise BadRequest()
-            else:
-                Starred.query.with_parent(self.contrib).delete()
-
+        if request.base_url.endswith("/star") and not self.star:
+            starred = Starred(contribution=self.contrib, user=session.user)
+            db.session.add(starred)
+            db.session.flush()
+            return jsonify_data(flash=False, action="star", id=starred.id)
+        elif request.base_url.endswith("/unstar") and self.star:
+            db.session.delete(self.star)
+            db.session.flush()
             return jsonify_data(flash=False, action="unstar")
         else:
             raise BadRequest()
