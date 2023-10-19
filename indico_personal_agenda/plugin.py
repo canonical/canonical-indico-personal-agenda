@@ -73,37 +73,46 @@ class PersonalAgendaPlugin(IndicoPlugin):
         return blueprint
 
     def _inject_ngtimetable_menu(self, event=None):
+        if not event.is_user_registered(session.user):
+            return ""
+
         return render_plugin_template("ngtimetable_menu.html", event=event)
 
     def _inject_shortener_button(self, target=None, event=None, classes=None):
         patternmatch = re.search(r"/event/(\d+)/contributions/(\d+)/", target or "")
-        if patternmatch:
-            query = Starred.query.filter_by(
-                user=session.user, contribution_id=patternmatch.group(2)
-            ).limit(1)
-            event = Event.get(patternmatch.group(1))
-            item = Contribution.get(patternmatch.group(2))
+        if not patternmatch:
+            return ""
 
-            is_speaker = any(
-                link.is_speaker
-                and link.person.user
-                and link.person.user == session.user
-                for link in item.person_links
-            )
+        event = Event.get(patternmatch.group(1))
+        if not event.is_user_registered(session.user):
+            return ""
 
-            starred, total = with_total_rows(query, True)
+        query = Starred.query.filter_by(
+            user=session.user, contribution_id=patternmatch.group(2)
+        ).limit(1)
+        item = Contribution.get(patternmatch.group(2))
 
-            return render_plugin_template(
-                "star_button.html",
-                context="contribution",
-                starred=bool(starred),
-                event=event,
-                itemId=patternmatch.group(2),
-                is_speaker=is_speaker,
-                total=total,
-            )
+        is_speaker = any(
+            link.is_speaker and link.person.user and link.person.user == session.user
+            for link in item.person_links
+        )
+
+        starred, total = with_total_rows(query, True)
+
+        return render_plugin_template(
+            "star_button.html",
+            context="contribution",
+            starred=bool(starred),
+            event=event,
+            itemId=patternmatch.group(2),
+            is_speaker=is_speaker,
+            total=total,
+        )
 
     def _inject_vc_button(self, event=None, item=None):
+        if not event.is_user_registered(session.user):
+            return ""
+
         query = Starred.query.filter_by(
             user=session.user, contribution_id=item.id
         ).limit(1)
@@ -129,7 +138,7 @@ class PersonalAgendaPlugin(IndicoPlugin):
         from indico.modules.events.layout.util import MenuEntryData
 
         def _visible_my_contributions(event):
-            if not session.user:
+            if not event.is_user_registered(session.user):
                 return False
 
             return (

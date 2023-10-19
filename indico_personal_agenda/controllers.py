@@ -1,4 +1,4 @@
-from flask import flash, request, session
+from flask import flash, redirect, request, session
 from indico.core.db.sqlalchemy import db
 from indico.core.plugins import url_for_plugin
 from indico.modules.events.contributions import contribution_settings
@@ -57,6 +57,13 @@ class RHViewAgenda(RHAuthenticatedEventBase):
         self.mycontributions = sorted(contribs, key=sortContrib)
 
     def _process(self):
+        if not self.event.is_user_registered(session.user):
+            return redirect(
+                url_for(
+                    "event_registration.display_regform_list", event_id=self.event.id
+                )
+            )
+
         contributions = list(map(lambda starred: starred.contribution, self.starred))
         published = contribution_settings.get(self.event, "published")
         timezone = self.event.display_tzinfo
@@ -99,7 +106,9 @@ class RHStarContribution(RHAuthenticatedEventBase):
         ).first()
 
     def _process(self):
-        if request.base_url.endswith("/star") and not self.star:
+        if not self.contrib.event.is_user_registered(session.user):
+            raise BadRequest()
+        elif request.base_url.endswith("/star") and not self.star:
             starred = Starred(contribution=self.contrib, user=session.user)
             db.session.add(starred)
             db.session.flush()
