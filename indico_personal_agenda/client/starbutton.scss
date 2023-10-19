@@ -1,10 +1,13 @@
+$star-color: #D9B74C;
+$speaker-color: #E95420;
+
 .star-button {
   &.starred {
-    color: #D4AF37 !important;
+    color: $star-color !important;
   }
 
   &.speaker {
-    color: #E95420 !important;
+    color: $speaker-color !important;
   }
 }
 
@@ -20,12 +23,12 @@
   }
 
   &:not(.speaker):active {
-    color: #D4AF37 !important;
+    color: $star-color !important;
     opacity: 0.8 !important;
   }
 
   &:not(.starred, .speaker):hover {
-    color: #D4AF37 !important;
+    color: $star-color !important;
   }
 }
 
@@ -34,7 +37,7 @@
 }
 
 .menu-item.show-personal-agenda.starred::before {
-  color: #D4AF37 !important;
+  color: $star-color !important;
 }
 
 .schedule.show-starred .contribution:not(.starred, .speaker) {
