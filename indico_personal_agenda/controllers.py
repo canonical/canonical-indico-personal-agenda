@@ -1,3 +1,4 @@
+import icalendar
 from flask import flash, redirect, request, session
 from indico.core.db.sqlalchemy import db
 from indico.core.plugins import url_for_plugin
@@ -5,10 +6,14 @@ from indico.modules.events.contributions import contribution_settings
 from indico.modules.events.contributions.models.contributions import Contribution
 from indico.modules.events.contributions.models.persons import AuthorType
 from indico.modules.events.contributions.util import get_contributions_for_user
-from indico.modules.events.controllers.base import RHAuthenticatedEventBase
+from indico.modules.events.controllers.base import (
+    RHAuthenticatedEventBase,
+    RHDisplayEventBase,
+)
 from indico.modules.events.management.controllers import RHManageEventBase
 from indico.web.flask.util import url_for
 from indico.web.forms.base import FormDefaults
+from indico.web.rh import allow_signed_url
 from indico.web.util import jsonify_data
 from sqlalchemy import func
 from sqlalchemy.orm import defaultload
@@ -160,3 +165,33 @@ class RHManageAgenda(RHManageEventBase):
         return WPManageAgenda(
             self, self.event, form=form, contributions=contributions
         ).display()
+
+
+@allow_signed_url
+class RHViewAgendaICS(RHDisplayEventBase):
+    def _process(self):
+        from indico.modules.events.contributions.ical import (
+            generate_contribution_component,
+        )
+
+        calendar = icalendar.Calendar()
+        calendar.add("version", "2.0")
+        calendar.add("prodid", "-//CERN//INDICO//EN")
+
+        if self.event.can_access(session.user):
+            starred = (
+                Starred.query.options(defaultload("contribution"))
+                .join(Contribution)
+                .filter(Starred.user == session.user)
+                .filter(Contribution.event == self.event)
+                .all()
+            )
+
+            for star in starred:
+                contrib = star.contribution
+                if not contrib.start_dt or not contrib.can_access(session.user):
+                    continue
+                comp = generate_contribution_component(contrib)
+                calendar.add_component(comp)
+
+        return calendar.to_ical()

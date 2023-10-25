@@ -10,9 +10,15 @@ from indico.modules.events.contributions.models.contributions import Contributio
 from indico.modules.events.contributions.views import WPContributionsDisplayBase
 from indico.modules.events.models.events import Event
 from indico.web.menu import SideMenuItem
+from indico.web.util import signed_url_for_user
 
 from . import _
-from .controllers import RHManageAgenda, RHStarContribution, RHViewAgenda
+from .controllers import (
+    RHManageAgenda,
+    RHStarContribution,
+    RHViewAgenda,
+    RHViewAgendaICS,
+)
 from .models.starred import Starred
 
 
@@ -66,6 +72,7 @@ class PersonalAgendaPlugin(IndicoPlugin):
             methods=("POST",),
         )
         blueprint.add_url_rule("/agenda", "view", RHViewAgenda)
+        blueprint.add_url_rule("/agenda.ics", "viewICS", RHViewAgendaICS)
 
         blueprint.add_url_rule(
             "/manage/agenda", "manage", RHManageAgenda, methods=("GET", "POST")
@@ -76,7 +83,16 @@ class PersonalAgendaPlugin(IndicoPlugin):
         if not event.is_user_registered(session.user):
             return ""
 
-        return render_plugin_template("ngtimetable_menu.html", event=event)
+        ics_url = signed_url_for_user(
+            session.user,
+            "plugin_personal_agenda.viewICS",
+            _external=True,
+            event_id=event.id,
+        )
+
+        return render_plugin_template(
+            "ngtimetable_menu.html", event=event, ics_url=ics_url
+        )
 
     def _inject_shortener_button(self, target=None, event=None, classes=None):
         patternmatch = re.search(r"/event/(\d+)/contributions/(\d+)/", target or "")
