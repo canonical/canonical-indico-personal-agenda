@@ -35,7 +35,9 @@ class RHViewAgenda(RHAuthenticatedEventBase):
 
         self.starred = (
             Starred.query.options(defaultload("contribution"))
-            .filter_by(user=session.user)
+            .join(Contribution)
+            .filter(Starred.user == session.user)
+            .filter(Contribution.event == self.event)
             .all()
         )
 
@@ -134,6 +136,7 @@ class RHManageAgenda(RHManageEventBase):
                 Contribution, star_count.label("star_count")
             )
             .join(Starred, Contribution.id == Starred.contribution_id)
+            .filter(Contribution.event == self.event)
             .group_by(Contribution.id)
             .having(star_count >= 1)
             .order_by(star_count.desc(), Contribution.friendly_id)
