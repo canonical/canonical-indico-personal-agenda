@@ -28,11 +28,23 @@
         {% if starred_intro_message %}
           {{starred_intro_message|sanitize_html}}
         {% endif %}
-        {% if starred_contributions %}
-            {% for contrib in starred_contributions | selectattr('start_dt_display') | sort(attribute='title') | sort(attribute='start_dt_display') %}
+        {% if future_starred_contributions and past_starred_contributions %}
+          <h4>{% trans %}Now Happening and Upcoming{% endtrans %}</h4>
+        {% endif %}
+        {% if future_starred_contributions %}
+            {% for contrib in future_starred_contributions  %}
                 {{- _render_contribution_row(timezone, contrib, True) -}}
             {% endfor %}
-        {%- else %}
+        {% endif %}
+        {% if future_starred_contributions and past_starred_contributions %}
+          <h4>{% trans %}Past{% endtrans %}</h4>
+        {% endif %}
+        {% if past_starred_contributions %}
+            {% for contrib in past_starred_contributions|reverse %}
+                {{- _render_contribution_row(timezone, contrib, True) -}}
+            {% endfor %}
+        {% endif %}
+        {%- if not future_starred_contributions and not past_starred_contributions %}
           {% trans %}You haven't starred any contributions yet. Check out the{% endtrans %} <a href="{{timetable_link}}">{% trans %}timetable{% endtrans %}</a> {% trans %} to build your agenda.{% endtrans %}
         {%- endif %}  
       </div>

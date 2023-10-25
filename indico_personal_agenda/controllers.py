@@ -1,3 +1,5 @@
+import datetime
+
 import icalendar
 from flask import flash, redirect, request, session
 from indico.core.db.sqlalchemy import db
@@ -11,6 +13,7 @@ from indico.modules.events.controllers.base import (
     RHDisplayEventBase,
 )
 from indico.modules.events.management.controllers import RHManageEventBase
+from indico.modules.events.timetable.models.entries import TimetableEntry
 from indico.web.flask.util import url_for
 from indico.web.forms.base import FormDefaults
 from indico.web.rh import allow_signed_url
@@ -41,8 +44,10 @@ class RHViewAgenda(RHAuthenticatedEventBase):
         self.starred = (
             Starred.query.options(defaultload("contribution"))
             .join(Contribution)
+            .join(TimetableEntry)
             .filter(Starred.user == session.user)
             .filter(Contribution.event == self.event)
+            .order_by(TimetableEntry.start_dt, Contribution.title)
             .all()
         )
 
@@ -71,9 +76,20 @@ class RHViewAgenda(RHAuthenticatedEventBase):
                 )
             )
 
-        contributions = list(map(lambda starred: starred.contribution, self.starred))
-        published = contribution_settings.get(self.event, "published")
         timezone = self.event.display_tzinfo
+        now = datetime.datetime.now(session.tzinfo)
+
+        past = []
+        future = []
+
+        for star in self.starred:
+            contrib = star.contribution
+            if now > contrib.end_dt_display:
+                past.append(contrib)
+            else:
+                future.append(contrib)
+
+        published = contribution_settings.get(self.event, "published")
 
         speaker_intro_message = self.plugin.event_settings.get(
             self.event, "speaker_intro_message"
@@ -91,7 +107,8 @@ class RHViewAgenda(RHAuthenticatedEventBase):
             self,
             self.event,
             starred_intro_message=starred_intro_message,
-            starred_contributions=contributions,
+            past_starred_contributions=past,
+            future_starred_contributions=future,
             timetable_link=timetable_link,
             speaker_intro_message=speaker_intro_message,
             own_contributions=self.mycontributions,
