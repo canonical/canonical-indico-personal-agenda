@@ -1,5 +1,5 @@
 from indico.web.forms.base import IndicoForm
-from indico.web.forms.widgets import CKEditorWidget
+from indico.web.forms.widgets import TinyMCEWidget
 from wtforms.fields import TextAreaField
 from wtforms.validators import Optional
 
@@ -10,7 +10,7 @@ class ManageAgendaForm(IndicoForm):
     speaker_intro_message = TextAreaField(
         _("Speaker Information"),
         [Optional()],
-        widget=CKEditorWidget(height=250),
+        widget=TinyMCEWidget(height=250),
         description=_(
             "Information shown at the top of the speaker section on the my conference page"
         ),
@@ -18,7 +18,7 @@ class ManageAgendaForm(IndicoForm):
     starred_intro_message = TextAreaField(
         _("Starred Information"),
         [Optional()],
-        widget=CKEditorWidget(height=250),
+        widget=TinyMCEWidget(height=250),
         description=_(
             "Information shown at the top of the starred section on the my conference page"
         ),
